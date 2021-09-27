@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\InfoTrait;
 use App\Models\Info;
 use Illuminate\Http\Request;
 
 class InfoController extends Controller
 {
+    use InfoTrait;
+
+    private $infoModel;
+
+    public function __construct(Info $info)
+    {
+        $this->infoModel = $info;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,8 @@ class InfoController extends Controller
      */
     public function index()
     {
-        //
+        $info = $this->infoModel::get();
+        return view('admin.information.index', compact('info'));
     }
 
     /**
@@ -24,7 +35,7 @@ class InfoController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.information.create');
     }
 
     /**
@@ -35,7 +46,14 @@ class InfoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request);
+        $request->validate([
+            'key'=>'required',
+            'value'=> 'required|min:10|max:255'
+        ]);
+        $this->infoModel::create($request->except(['_token']));
+        return redirect()->route('information.index')->with('success', 'Information Has Been Created Successfully');
+
     }
 
     /**
@@ -44,9 +62,10 @@ class InfoController extends Controller
      * @param  \App\Models\Info  $info
      * @return \Illuminate\Http\Response
      */
-    public function show(Info $info)
+    public function show($infoId)
     {
-        //
+        $info = $this->getInfoById($infoId);
+        return view('admin.information.show', compact('info'));
     }
 
     /**
@@ -55,9 +74,10 @@ class InfoController extends Controller
      * @param  \App\Models\Info  $info
      * @return \Illuminate\Http\Response
      */
-    public function edit(Info $info)
+    public function edit($infoId)
     {
-        //
+        $info = $this->getInfoById($infoId);
+        return view('admin.information.edit', compact('info'));
     }
 
     /**
@@ -67,9 +87,18 @@ class InfoController extends Controller
      * @param  \App\Models\Info  $info
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Info $info)
+    public function update(Request $request, $infoId)
     {
-        //
+       // dd($request);
+        if ($info = $this->getInfoById($infoId)) {
+            $request->validate([
+                'key'=>'required',
+                'value'=> 'required|min:10|max:255'
+            ]);
+            $info->update($request->except(['_token']));
+            return redirect()->route('information.index')->with('success', 'Information Has Been Updated Successfully');
+
+        }
     }
 
     /**
@@ -78,8 +107,12 @@ class InfoController extends Controller
      * @param  \App\Models\Info  $info
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Info $info)
+    public function destroy($infoId)
     {
-        //
+        if ($info = $this->getInfoById($infoId)) {
+            $info->delete();
+            return redirect()->route('information.index')->with('success', 'Information Has Been Deleted Successfully');
+        }
+        return abort('404');
     }
 }

@@ -1,26 +1,13 @@
 <div id="footer">
+@foreach($information as $info)
         <div class="container text-center">
             <div class="col-md-4">
-                <h3>Address</h3>
+                <h3>{{$info->key}}</h3>
                 <div class="contact-item">
-                    <p>4321 California St,</p>
-                    <p>San Francisco, CA 12345</p>
+                    <p>{{$info->value}}</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <h3>Opening Hours</h3>
-                <div class="contact-item">
-                    <p>Mon-Thurs: 10:00 AM - 11:00 PM</p>
-                    <p>Fri-Sun: 11:00 AM - 02:00 AM</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <h3>Contact Info</h3>
-                <div class="contact-item">
-                    <p>Phone: +1 123 456 1234</p>
-                    <p>Email: info@company.com</p>
-                </div>
-            </div>
+            @endforeach
         </div>
         <div class="container-fluid text-center copyrights">
             <div class="col-md-8 col-md-offset-2">
@@ -35,14 +22,14 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="{{asset('assets/js/jquery.1.11.1.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/bootstrap.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/SmoothScroll.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/nivo-lightbox.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/jquery.isotope.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/jqBootstrapValidation.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/contact_me.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/main.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/jquery.1.11.1.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/bootstrap.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/SmoothScroll.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/nivo-lightbox.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/jquery.isotope.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/jqBootstrapValidation.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/contact_me.js')}}"></script>
+    <script type="text/javascript" src="{{asset('endUserAssets/js/main.js')}}"></script>
 </body>
 
 </html>

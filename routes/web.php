@@ -31,14 +31,14 @@ Route::get('contact_us',[HomeController::class, 'contact_us'])->name('contact_us
 
 
 
-Route::get('admin_panel', function () {
-    return view('admin_panel');
+Route::get('admin/index', function () {
+    return view('admin/index');
 })->name('admin.index');
 
-Route::resource('contact', ContactController::class);
-Route::resource('about', AboutController::class);
+Route::resource('contacts', ContactController::class);
+Route::resource('about-us', AboutController::class);
 Route::resource('chefs', ChefController::class);
-Route::resource('info', InfoController::class);
+Route::resource('information', InfoController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('menus', MenuController::class);
 Route::resource('galleries', GalleryController::class);

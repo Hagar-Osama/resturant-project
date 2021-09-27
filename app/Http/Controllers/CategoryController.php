@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\CategoryTrait;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    use CategoryTrait;
+    private $categoryModel;
+    public function __construct(Category $category)
+    {
+         $this->categoryModel = $category;
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,8 +23,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::get();
-        return view('categories.index', compact('categories'));
+        $categories = $this->categoryModel::get();
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -25,7 +34,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('categories.create');
+        return view('admin.categories.create');
     }
 
     /**
@@ -37,12 +46,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required|string|max:255|min:3',
+            'name' => 'required|string|max:255|min:3',
 
         ]);
-        Category::create($request->except(['_token']));
+        $this->categoryModel::create($request->except(['_token']));
         return redirect()->route('categories.index')->with('success', 'Category Has Been Created Successfully');
-
     }
 
     /**
@@ -51,10 +59,10 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($categoryId)
     {
-        $category = Category::findorfail($id);
-        return view('categories.show', compact('category'));
+        $category = $this->getCategoryById($categoryId);
+        return view('admin.categories.show', compact('category'));
     }
 
     /**
@@ -63,10 +71,10 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($categoryId)
     {
-        $category = Category::find($id);
-        return view('categories.edit', compact('category'));
+        $category = $this->getCategoryById($categoryId);
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**
@@ -76,17 +84,16 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $categoryId)
     {
-        if($category = Category::find($id)) {
+        if ($category =  $this->getCategoryById($categoryId)) {
 
-        }  $request->validate([
-            'name'=>'required|string|max:255|min:3',
-
-        ]);
-        $category->update($request->except(['_token']));
-        return redirect()->route('categories.index')->with('success', 'Category Has Been Updated Successfully');
-
+            $request->validate([
+                'name' => 'required|string|max:255|min:3',
+            ]);
+            $category->update($request->except(['_token']));
+           return redirect()->route('categories.index')->with('success', 'Category Has Been Updated Successfully');
+        }
     }
 
     /**
@@ -95,9 +102,9 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($categoryId)
     {
-        if ($category = Category::find($id)) {
+        if ($category = $this->getCategoryById($categoryId)) {
             $category->delete();
             return redirect()->route('categories.index')->with('success', 'Category Has Been Deleted Successfully');
         }

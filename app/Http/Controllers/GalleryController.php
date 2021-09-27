@@ -14,7 +14,8 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        //
+        $galleries = Gallery::get();
+        return view('admin.galleries.index', compact('galleries'));
     }
 
     /**
@@ -24,7 +25,7 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.galleries.create');
     }
 
     /**
@@ -35,7 +36,27 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=>'required|string|min:5|max:100',
+            'category_id' =>'required'
+        ]);
+        if ($request->hasFile('image')) {
+            $request->validate([
+                'image' => 'image|mimes:png,jpg,svg,gif|max:2048'
+
+            ]);
+            $image = $request->file('image');
+            $image_name = rand(). '.' .$image->getClientOriginalExtension();
+            $image->move('images/galleries', $image_name);
+            Gallery::create([
+                'name'=>$request->name,
+                'category_id'=>$request->category_id,
+                'image'=>$image_name
+            ]);
+
+        }
+        return redirect()->route('admin.galleries.index')->with('success', 'Gallery Has Been Added Successfully');
+
     }
 
     /**
@@ -44,9 +65,10 @@ class GalleryController extends Controller
      * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function show(Gallery $gallery)
+    public function show($id)
     {
-        //
+        $gallery = Gallery::findorfail($id);
+        return view('admin.galleries.show', compact('gallery'));
     }
 
     /**
@@ -55,9 +77,10 @@ class GalleryController extends Controller
      * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function edit(Gallery $gallery)
+    public function edit($id)
     {
-        //
+        $gallery = Gallery::find($id);
+        return view('admin.galleries.edit', compact('gallery'));
     }
 
     /**
@@ -67,9 +90,37 @@ class GalleryController extends Controller
      * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Gallery $gallery)
+    public function update(Request $request, $id)
     {
-        //
+        if ($gallery = Gallery::find($id)) {
+            $request->validate([
+                'name'=>'required|string|min:5|max:100',
+                'category_id' =>'required'
+            ]);
+            $data  =$request->except(['_token']);
+
+            if ($request->hasFile('image')) {
+                $request->validate([
+                    'image' => 'image|mimes:png,jpg,svg,gif|max:2048'
+
+                ]);
+                $image = $request->file('image');
+                $image_name = rand(). '.' .$image->getClientOriginalExtension();
+                $image->move('images/galleries', $image_name);
+                Gallery::create([
+                    'name'=>$request->name,
+                    'category_id'=>$request->category_id,
+                    'image'=>$image_name
+                ]);
+                $data['image'] = $image_name;
+                if($gallery->image) {
+                    unlink('images/galleries/'.$image_name);
+                }
+            }
+        }
+        $gallery->update($data);
+        return redirect()->route('admin.galleries.index')->with('success', 'Gallery Has Been Updated Successfully');
+
     }
 
     /**
@@ -78,8 +129,15 @@ class GalleryController extends Controller
      * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gallery $gallery)
+    public function destroy($id)
     {
-        //
+        if ($gallery = Gallery::find($id)) {
+            if ($gallery->image) {
+                unlink('images/galleries/'.$gallery->image);
+            }
+            $gallery->delete();
+            return redirect()->route('admin.galleries.index')->with('success', 'Gallery Has Been Deleted Successfully');
+        }
+        return abort('404');
     }
 }

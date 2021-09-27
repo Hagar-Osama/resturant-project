@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menu;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller
@@ -13,7 +14,8 @@ class MenuController extends Controller
      */
     public function index()
     {
-        //
+        $menus = Menu::get();
+        return view('admin.menus.index', compact('menus'));
     }
 
     /**
@@ -23,7 +25,7 @@ class MenuController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.menus.create');
     }
 
     /**
@@ -34,7 +36,14 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=>'required|string|min:10|max:100',
+            'description'=> 'required|string|min:10|max:255',
+            'price' => 'required|double',
+            'category_id' =>'required|integer'
+        ]);
+        Menu::create($request->except(['_token']));
+        return redirect()->route('admin.menus.index')->with('success', 'Menu Has Been Added Successfully');
     }
 
     /**
@@ -45,7 +54,8 @@ class MenuController extends Controller
      */
     public function show($id)
     {
-        //
+        $menu = Menu::findorfail($id);
+        return view('admin.menus.show', compact('menu'));
     }
 
     /**
@@ -56,7 +66,8 @@ class MenuController extends Controller
      */
     public function edit($id)
     {
-        //
+        $menu = Menu::find($id);
+        return view('admin.menus.edit', compact('menu'));
     }
 
     /**
@@ -68,7 +79,17 @@ class MenuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if ($menu = Menu::find($id)) {
+            $request->validate([
+                'name'=>'required|string|min:10|max:100',
+                'description'=> 'required|string|min:10|max:255',
+                'price' => 'required|double',
+                'category_id' =>'required|integer'
+            ]);
+            $menu->update($request->except(['_token']));
+            return redirect()->route('admin.menus.index')->with('success', 'Menu Has Been Updated Successfully');
+
+        }
     }
 
     /**
@@ -79,6 +100,10 @@ class MenuController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if ($menu = Menu::find($id)) {
+            $menu->delete();
+            return redirect()->route('admin.menus.index')->with('success', 'Menu Has Been Deleted Successfully');
+        }
+        return abort('404');
     }
 }

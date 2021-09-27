@@ -15,7 +15,7 @@ class ChefController extends Controller
     public function index()
     {
         $chefs = Chef::get();
-        return view('chefs.index', compact('chefs'));
+        return view('admin.chefs.index', compact('chefs'));
     }
 
     /**
@@ -25,7 +25,7 @@ class ChefController extends Controller
      */
     public function create()
     {
-        return view('chefs.create');
+        return view('admin.chefs.create');
     }
 
     /**
@@ -53,7 +53,7 @@ class ChefController extends Controller
             'image' => $image_name
         ]);
     }
-    return redirect()->route('chefs.index')->with('success', 'Chef Us Has Been Added Successfully');
+    return redirect()->route('admin.chefs.index')->with('success', 'Chef Us Has Been Added Successfully');
 }
     /**
      * Display the specified resource.
@@ -77,7 +77,7 @@ class ChefController extends Controller
     public function edit($id)
     {
         $chef = Chef::find($id);
-        return view('chefs.edit', compact('chef'));
+        return view('admin.chefs.edit', compact('chef'));
 
     }
 
@@ -111,7 +111,7 @@ class ChefController extends Controller
             }
         }
          $row->update($data);
-         return redirect()->route('chefs.index')->with('success', 'Chef Has Been Updated Successfully');
+         return redirect()->route('admin.chefs.index')->with('success', 'Chef Has Been Updated Successfully');
 
     }
 
@@ -129,7 +129,7 @@ class ChefController extends Controller
                 unlink('images/chefs/'.$chef->image);
             }
             $chef->delete();
-            return redirect()->route('chefs.index')->with('success', 'Chef Has Been Deleted Successfully');
+            return redirect()->route('admin.chefs.index')->with('success', 'Chef Has Been Deleted Successfully');
         }
         return abort('404');
     }

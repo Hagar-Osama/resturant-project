@@ -15,7 +15,7 @@ class AboutController extends Controller
     public function index()
     {
         $about = About::get();
-        return view('about.index', compact('about'));
+        return view('admin.about-us.index', compact('about'));
     }
 
     /**
@@ -25,7 +25,7 @@ class AboutController extends Controller
      */
     public function create()
     {
-        return view('about.create');
+        return view('admin.about-us.create');
     }
 
     /**
@@ -52,7 +52,7 @@ class AboutController extends Controller
                 'image' => $image_name
             ]);
         }
-        return redirect()->route('about.index')->with('success', 'About Us Has Been Added Successfully');
+        return redirect()->route('admin.about-us.index')->with('success', 'About Us Has Been Added Successfully');
     }
 
     /**
@@ -61,10 +61,10 @@ class AboutController extends Controller
      * @param  \App\Models\About  $about
      * @return \Illuminate\Http\Response
      */
-    public function show(About $about)
+    public function show($id)
     {
-        $row = About::findorfail($about);
-        return view('about.show', compact('row'));
+        $about_u = About::findorfail($id);
+        return view('admin.about-us.show', compact('about_u'));
     }
 
     /**
@@ -73,10 +73,10 @@ class AboutController extends Controller
      * @param  \App\Models\About  $about
      * @return \Illuminate\Http\Response
      */
-    public function edit(About $about)
+    public function edit($id)
     {
-        $row = About::find($about);
-        return view('about.edit', compact('row'));
+        $about_u = About::find($id);
+        return view('admin.about-us.edit', compact('about_u'));
     }
 
     /**
@@ -86,9 +86,9 @@ class AboutController extends Controller
      * @param  \App\Models\About  $about
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, About $about)
+    public function update(Request $request, $id)
     {
-        if ($about = About::find($about)) {
+        if ($about = About::find($id)) {
             $request->validate([
                 'body' => 'required|string|min:10',
             ]);
@@ -108,7 +108,7 @@ class AboutController extends Controller
             }
         }
         $about->update($data);
-        return redirect()->route('about.index')->with('success', 'About Us Has Been Updated Successfully');
+        return redirect()->route('admin.about-us.index')->with('success', 'About Us Has Been Updated Successfully');
     }
 
     /**
@@ -117,15 +117,15 @@ class AboutController extends Controller
      * @param  \App\Models\About  $about
      * @return \Illuminate\Http\Response
      */
-    public function destroy(About $about)
+    public function destroy($id)
     {
-        if ($about = About::find($about)) {
+        if ($about = About::find($id)) {
             if ($about->image) {
 
                 unlink('images/about_us/'.$about->image);
             }
             $about->delete();
-            return redirect()->route('about.index')->with('success', 'About Us Has Been Deleted Successfully');
+            return redirect()->route('admin.about-us.index')->with('success', 'About Us Has Been Deleted Successfully');
         }
         return abort('404');
     }
