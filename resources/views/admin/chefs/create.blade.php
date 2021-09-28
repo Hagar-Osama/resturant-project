@@ -44,7 +44,7 @@
               <div class="col-md-12 mg-t-10">
                 <div class="form-group">
                   <label class="form-label">Description: <span class="tx-danger">*</span></label>
-                  <textarea class="form-control" placeholder="Enter description" required name="body" rows="5"></textarea>
+                  <textarea class="form-control" placeholder="Enter description" required name="description" rows="5"></textarea>
                 </div>
               </div>
 

@@ -32,7 +32,7 @@
       <div class="card">
         <div class="card-body">
           @include('partials._session')
-          <form method="post" action="{{route('chefs.update')}}" enctype="multipart/form-data" data-parsley-validate="">
+          <form method="post" action="{{route('chefs.update', [$chef->id])}}" enctype="multipart/form-data" data-parsley-validate="">
             @csrf
             @method('PUT')
             <input type="hidden" name="chefId" value="{{$chef->id}}">
@@ -47,7 +47,7 @@
               <div class="col-md-12 mg-t-10">
                 <div class="form-group">
                   <label class="form-label">Description: <span class="tx-danger">*</span></label>
-                  <textarea class="form-control" required name="body" rows="5">{{$chef->body}}</textarea>
+                  <textarea class="form-control" required name="description" rows="5">{{$chef->description}}</textarea>
                 </div>
               </div>
 

@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\chefTrait;
+use App\Http\Traits\fileTrait;
 use App\Models\Chef;
 use Illuminate\Http\Request;
 
 class ChefController extends Controller
 {
+
+    use chefTrait;
+    use fileTrait;
+    private $chefModel;
+    public function __construct(Chef $chef)
+    {
+        $this->chefModel = $chef;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +25,7 @@ class ChefController extends Controller
      */
     public function index()
     {
-        $chefs = Chef::get();
+        $chefs = $this->chefModel::get();
         return view('admin.chefs.index', compact('chefs'));
     }
 
@@ -46,14 +57,15 @@ class ChefController extends Controller
         ]);
         $image = $request->file('image');
         $image_name = rand() . '.' . $image->getClientOriginalExtension();
-        $image->move('images/chefs', $image_name);
-        Chef::create([
+        $this->uploadFile($image,'chefs',$image_name);
+        // $image->move('images/chefs', $image_name);
+        $this->chefModel::create([
             'name' => $request->name,
             'description'=>$request->description,
             'image' => $image_name
         ]);
     }
-    return redirect()->route('admin.chefs.index')->with('success', 'Chef Us Has Been Added Successfully');
+    return redirect()->route('chefs.index')->with('success', 'Chef Us Has Been Added Successfully');
 }
     /**
      * Display the specified resource.
@@ -61,9 +73,9 @@ class ChefController extends Controller
      * @param  \App\Models\Chef  $chef
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($chefId)
     {
-        $chef = Chef::findorfail($id);
+        $chef = $this->getChefById($chefId);
         return view('chefs.show', compact('chef'));
 
     }
@@ -74,9 +86,9 @@ class ChefController extends Controller
      * @param  \App\Models\Chef  $chef
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($chefId)
     {
-        $chef = Chef::find($id);
+        $chef = $this->getChefById($chefId);
         return view('admin.chefs.edit', compact('chef'));
 
     }
@@ -88,9 +100,9 @@ class ChefController extends Controller
      * @param  \App\Models\Chef  $chef
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $chefId)
     {
-         if($row = Chef::find($id)) {
+         if($row = $this->getChefById($chefId)) {
             $request->validate([
                 'name'=>'required|string|min:5|max:100',
                 'description'=>'required|string|min:5|max:255'
@@ -103,7 +115,7 @@ class ChefController extends Controller
                 ]);
                 $image = $request->file('image');
                 $image_name = rand() . '.' . $image->getClientOriginalExtension();
-                $image->move('images/chefs', $image_name);
+                $this->uploadfile($image, 'chefs', $image_name);
                 $data['image'] = $image_name;
                 if($row->image) {
                     unlink('images/chefs/'.$row->image);
@@ -111,7 +123,7 @@ class ChefController extends Controller
             }
         }
          $row->update($data);
-         return redirect()->route('admin.chefs.index')->with('success', 'Chef Has Been Updated Successfully');
+         return redirect()->route('chefs.index')->with('success', 'Chef Has Been Updated Successfully');
 
     }
 
@@ -121,15 +133,15 @@ class ChefController extends Controller
      * @param  \App\Models\Chef  $chef
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($chefId)
     {
-        if ($chef = Chef::find($id)) {
+        if ($chef = $this->getChefById($chefId)) {
             if ($chef->image) {
 
                 unlink('images/chefs/'.$chef->image);
             }
             $chef->delete();
-            return redirect()->route('admin.chefs.index')->with('success', 'Chef Has Been Deleted Successfully');
+            return redirect()->route('chefs.index')->with('success', 'Chef Has Been Deleted Successfully');
         }
         return abort('404');
     }

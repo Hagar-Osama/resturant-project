@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\menuTrait;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
+    use menuTrait;
+    private $menuModel;
+    public function __construct(Menu $menu)
+    {
+         $this->menuModel = $menu;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +21,7 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = Menu::get();
+        $menus = $this->menuModel::with('category_id')->get();
         return view('admin.menus.index', compact('menus'));
     }
 
@@ -36,14 +43,15 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
+       // dd($request);
         $request->validate([
             'name'=>'required|string|min:10|max:100',
             'description'=> 'required|string|min:10|max:255',
-            'price' => 'required|double',
-            'category_id' =>'required|integer'
+            'price' => 'required',
+            'category_id' =>'required'
         ]);
-        Menu::create($request->except(['_token']));
-        return redirect()->route('admin.menus.index')->with('success', 'Menu Has Been Added Successfully');
+        $this->menuModel::create($request->except(['_token']));
+        return redirect()->route('menus.index')->with('success', 'Menu Has Been Added Successfully');
     }
 
     /**
@@ -52,9 +60,9 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($menuId)
     {
-        $menu = Menu::findorfail($id);
+        $menu = $this->getMenuById($menuId);
         return view('admin.menus.show', compact('menu'));
     }
 
@@ -64,9 +72,9 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($menuId)
     {
-        $menu = Menu::find($id);
+        $menu = $this->getMenuById($menuId);
         return view('admin.menus.edit', compact('menu'));
     }
 
@@ -77,17 +85,17 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $menuId)
     {
-        if ($menu = Menu::find($id)) {
+        if ($menu = $this->getMenuById($menuId)) {
             $request->validate([
                 'name'=>'required|string|min:10|max:100',
                 'description'=> 'required|string|min:10|max:255',
-                'price' => 'required|double',
-                'category_id' =>'required|integer'
+                'price' => 'required',
+                'category_id' =>'required'
             ]);
             $menu->update($request->except(['_token']));
-            return redirect()->route('admin.menus.index')->with('success', 'Menu Has Been Updated Successfully');
+            return redirect()->route('menus.index')->with('success', 'Menu Has Been Updated Successfully');
 
         }
     }
@@ -98,11 +106,11 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($menuId)
     {
-        if ($menu = Menu::find($id)) {
+        if ($menu = $this->getMenuById($menuId)) {
             $menu->delete();
-            return redirect()->route('admin.menus.index')->with('success', 'Menu Has Been Deleted Successfully');
+            return redirect()->route('menus.index')->with('success', 'Menu Has Been Deleted Successfully');
         }
         return abort('404');
     }

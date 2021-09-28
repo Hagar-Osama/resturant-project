@@ -54,11 +54,11 @@
                   <td>{{$chef->body}}</td>
                   <td>
                     <div class="d-flex my-xl-auto right-content">
-                      <form method="post" action="{{route('chefs.delete')}}">
+                      <form method="post" action="{{route('chefs.destroy', [$chef->id])}})}}">
                         @csrf
                         @method('DELETE')
                         <div class="pr-1 mb-3 mb-xl-0">
-                          <input type="hidden" name="chefId" value="{{$chef->id}}">
+                          <!-- <input type="hidden" name="chefId" value="{{$chef->id}}"> -->
                           <button class="btn btn-danger btn-icon mr-2" type="submit"><i class="fas fa-trash-alt"></i></button>
                         </div>
                       </form>

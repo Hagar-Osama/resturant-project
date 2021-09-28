@@ -31,13 +31,13 @@
       <div class="card">
         <div class="card-body">
           @include('partials._session')
-          <form action="#" method="post" data-parsley-validate="">
+          <form action="{{route('menus.store')}}" method="post" data-parsley-validate="">
             @csrf
             <div class="row row-xs">
               <div class="col-md-12 mg-t-10">
                 <div class="form-group">
-                  <label class="form-label">Title: <span class="tx-danger">*</span></label>
-                  <input class="form-control @error('title') is-invalid fparsley-error parsley-error @enderror" name="title" placeholder="Enter title" required type="text" value="{{ old('title') }}">
+                  <label class="form-label">Food Name: <span class="tx-danger">*</span></label>
+                  <input class="form-control @error('title') is-invalid fparsley-error parsley-error @enderror" name="name" placeholder="Enter title" required type="text" value="{{ old('title') }}">
                   @error('title')
                     <span class="invalid-feedback text-danger" role="alert">
                       <p>{{ $message }}</p>
@@ -70,10 +70,10 @@
               <div class="col-md-12 mg-t-20">
                 <div class="form-group">
                   <label class="form-label mt-2">Choose Category <span title="required" class="tx-danger">*</span></label>
-                  <select name="category" class="form-control select2 @error('category') is-invalid fparsley-error parsley-error @enderror">
+                  <select name="category_id" class="form-control select2 @error('category') is-invalid fparsley-error parsley-error @enderror">
                     <option value=""></option>
                     <option value="breakfast">BREAKFAST</option>
-                    <option value="main_course">MAIN COURSE</option>
+                    <option value="all">ALL</option>
                     <option value="dinner">DINNER</option>
                     <option value="lunch">LUNCH</option>
                   </select>

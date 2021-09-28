@@ -32,13 +32,14 @@
       <div class="card">
         <div class="card-body">
           @include('partials._session')
-          <form action="#" method="post" data-parsley-validate="">
+          <form action="{{route('menus.update',[$menu->id])}}" method="post" data-parsley-validate="">
             @csrf
+            @method('PUT')
             <div class="row row-xs">
               <div class="col-md-12 mg-t-10">
                 <div class="form-group">
-                  <label class="form-label">Title: <span class="tx-danger">*</span></label>
-                  <input class="form-control @error('title') is-invalid fparsley-error parsley-error @enderror" name="title" placeholder="Enter title" required type="text" value="{{ old('title') }}">
+                  <label class="form-label">Food Name: <span class="tx-danger">*</span></label>
+                  <input class="form-control @error('title') is-invalid fparsley-error parsley-error @enderror" name="name" value="{{$menu->name}}" placeholder="Enter title" required type="text" value="{{ old('title') }}">
                   @error('title')
                   <span class="invalid-feedback text-danger" role="alert">
                     <p>{{ $message }}</p>
@@ -49,7 +50,7 @@
               <div class="col-md-12 mg-t-10">
                 <div class="form-group">
                   <label class="form-label">Description: <span class="tx-danger">*</span></label>
-                  <textarea class="form-control @error('description') is-invalid fparsley-error parsley-error @enderror" placeholder="Enter description" required name="description" rows="5">{{ old('description') }}</textarea>
+                  <textarea class="form-control @error('description') is-invalid fparsley-error parsley-error @enderror" placeholder="Enter description" required name="description" rows="5">{{$menu->description}}</textarea>
                   @error('description')
                   <span class="invalid-feedback text-danger" role="alert">
                       <p>{{ $message }}</p>
@@ -60,7 +61,7 @@
               <div class="col-md-12 mg-t-10">
                 <div class="form-group">
                   <label class="form-label">Price: <span class="tx-danger">*</span></label>
-                  <input class="form-control @error('price') is-invalid fparsley-error parsley-error @enderror" name="price" placeholder="Enter price" required type="text" value="{{ old('price') }}">
+                  <input class="form-control @error('price') is-invalid fparsley-error parsley-error @enderror" name="price" placeholder="Enter price" required type="text" value="{{ $menu->price }}">
                   @error('price')
                   <span class="invalid-feedback text-danger" role="alert">
                     <p>{{ $message }}</p>
@@ -71,12 +72,12 @@
               <div class="col-md-12 mg-t-20">
                 <div class="form-group">
                   <label class="form-label mt-2">Choose Category <span title="required" class="tx-danger">*</span></label>
-                  <select name="category" class="form-control select2 @error('category') is-invalid fparsley-error parsley-error @enderror">
+                  <select name="category_id" class="form-control select2 @error('category') is-invalid fparsley-error parsley-error @enderror">
                     <option value=""></option>
-                    <option value="breakfast">BREAKFAST</option>
-                    <option value="main_course">MAIN COURSE</option>
-                    <option value="dinner">DINNER</option>
-                    <option value="lunch">LUNCH</option>
+                    <option value="BREAKFAST" @if($menu->category->name == 'BREAKFAST') selected @else "" @endif>BREAKFAST</option>
+                    <option value="MAIN COURSE"@if($menu->category->name == 'MAIN COURSE') selected @else "" @endif>MAIN COURSE</option>
+                    <option value="DINNER" @if($menu->category->name == 'DINNER') selected @else "" @endif>DINNER</option>
+                    <option value="LUNCH" @if($menu->category->name == 'LUNCH') selected @else "" @endif>LUNCH</option>
                   </select>
                   @error('category')
                   <span class="invalid-feedback text-danger" role="alert">
