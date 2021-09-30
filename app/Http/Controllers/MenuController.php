@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\menuTrait;
+use App\Models\Category;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class MenuController extends Controller
     private $menuModel;
     public function __construct(Menu $menu)
     {
-         $this->menuModel = $menu;
+        $this->menuModel = $menu;
     }
     /**
      * Display a listing of the resource.
@@ -21,7 +22,7 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = $this->menuModel::with('category_id')->get();
+        $menus = $this->menuModel->get();
         return view('admin.menus.index', compact('menus'));
     }
 
@@ -32,7 +33,8 @@ class MenuController extends Controller
      */
     public function create()
     {
-        return view('admin.menus.create');
+        $categories = Category::get();
+        return view('admin.menus.create', compact('categories'));
     }
 
     /**
@@ -43,14 +45,19 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-       // dd($request);
+        // dd($request);
         $request->validate([
-            'name'=>'required|string|min:10|max:100',
-            'description'=> 'required|string|min:10|max:255',
+            'name' => 'required|string|min:10|max:100',
+            'description' => 'required|string|min:10|max:255',
             'price' => 'required',
-            'category_id' =>'required'
+            'category_id' => 'required'
         ]);
-        $this->menuModel::create($request->except(['_token']));
+        $this->menuModel::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category_id' => $request->category_id
+        ]);
         return redirect()->route('menus.index')->with('success', 'Menu Has Been Added Successfully');
     }
 
@@ -75,7 +82,8 @@ class MenuController extends Controller
     public function edit($menuId)
     {
         $menu = $this->getMenuById($menuId);
-        return view('admin.menus.edit', compact('menu'));
+        $categories = Category::get();
+        return view('admin.menus.edit', compact('menu', 'categories'));
     }
 
     /**
@@ -89,14 +97,13 @@ class MenuController extends Controller
     {
         if ($menu = $this->getMenuById($menuId)) {
             $request->validate([
-                'name'=>'required|string|min:10|max:100',
-                'description'=> 'required|string|min:10|max:255',
+                'name' => 'required|string|min:10|max:100',
+                'description' => 'required|string|min:10|max:255',
                 'price' => 'required',
-                'category_id' =>'required'
+                'category_id' => 'required'
             ]);
             $menu->update($request->except(['_token']));
             return redirect()->route('menus.index')->with('success', 'Menu Has Been Updated Successfully');
-
         }
     }
 

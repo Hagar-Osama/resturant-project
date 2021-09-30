@@ -6,4 +6,8 @@ trait InfoTrait {
     {
         return $this->infoModel::find($infoId);
     }
+    private function getInfo()
+    {
+        return $this->infoModel::get();
+    }
 }

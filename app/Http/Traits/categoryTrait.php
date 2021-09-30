@@ -6,5 +6,9 @@ Trait CategoryTrait {
     {
         return $this->categoryModel::find($categoryId);
     }
+    private function getCategory()
+    {
+        return $this->categoryModel::get();
+    }
 }
 

@@ -42,7 +42,7 @@ class ContactController extends Controller
             'message'=> 'required|string|min:5|max:100'
         ]);
         Contact::create($request->except('_token'));
-        return redirect()->route('admin.contacts.index')->with('success', 'Message Has Been Stored Successfully');
+        return redirect()->route('contacts.index')->with('success', 'Message Has Been Stored Successfully');
     }
 
     /**
@@ -85,7 +85,7 @@ class ContactController extends Controller
                 'message'=> 'required|string|min:5|max:100'
             ]);
             $contact->update($request->except(['_token']));
-            return redirect()->route('admin.contacts.index')->with('success', 'Message Has Been Updated Successfully');
+            return redirect()->route('contacts.index')->with('success', 'Message Has Been Updated Successfully');
 
         }
 
@@ -101,7 +101,7 @@ class ContactController extends Controller
     {
         if ($contact = Contact::find($id)) {
             $contact->delete();
-            return redirect()->route('admin.contacts.index')->with('success', 'Message Has Been Deleted Successfully');
+            return redirect()->route('contacts.index')->with('success', 'Message Has Been Deleted Successfully');
         }
         return abort('404');
     }

@@ -29,7 +29,8 @@
                     <div class="main-signup-header">
                       <h2>Welcome back!</h2>
                       <h5 class="font-weight-semibold mb-4">Please sign in to continue.</h5>
-                      <form action="" method="POST">
+                      @include('partials._session')
+                      <form action="{{route('admin.login')}}" method="POST">
                         @csrf
                         <div class="form-group">
                           <label>Email</label>

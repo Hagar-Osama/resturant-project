@@ -73,11 +73,10 @@
                 <div class="form-group">
                   <label class="form-label mt-2">Choose Category <span title="required" class="tx-danger">*</span></label>
                   <select name="category_id" class="form-control select2 @error('category') is-invalid fparsley-error parsley-error @enderror">
+                      @foreach($categories as $category)
                     <option value=""></option>
-                    <option value="BREAKFAST" @if($menu->category->name == 'BREAKFAST') selected @else "" @endif>BREAKFAST</option>
-                    <option value="MAIN COURSE"@if($menu->category->name == 'MAIN COURSE') selected @else "" @endif>MAIN COURSE</option>
-                    <option value="DINNER" @if($menu->category->name == 'DINNER') selected @else "" @endif>DINNER</option>
-                    <option value="LUNCH" @if($menu->category->name == 'LUNCH') selected @else "" @endif>LUNCH</option>
+                    <option value="{{$category->id}}" {{$menu->category_id == $category->id ? 'selected' : "" }}>{{$category->name}}</option>
+                   @endforeach
                   </select>
                   @error('category')
                   <span class="invalid-feedback text-danger" role="alert">

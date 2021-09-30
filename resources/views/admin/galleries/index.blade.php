@@ -29,7 +29,7 @@
       <div class="card mg-b-20">
         <div class="card-header pb-0">
           <div class="d-flex justify-content-between">
-            <h4 class="card-title mg-b-0">Show All Chefs</h4>
+            <h4 class="card-title mg-b-0">Show All Galleries</h4>
           </div>
         </div>
         <div class="card-body">
@@ -39,27 +39,33 @@
               <thead>
               <tr>
                 <th class="border-bottom-0">Image</th>
-                <th class="border-bottom-0">Full Name</th>
-                <th class="border-bottom-0">Description</th>
+                <th class="border-bottom-0">Name</th>
+                <th class="border-bottom-0">Category</th>
                 <th class="border-bottom-0">Action</th>
               </tr>
               </thead>
               <tbody>
                 <tr>
+                    @foreach($galleries as $gallery)
                   <td>
-                    <img src="" height="200px">
+                    <img src="{{asset('images/galleries/'.$gallery->image)}}" height="200px">
                   </td>
-                  <td></td>
-                  <td></td>
+                  <td>{{$gallery->name}}</td>
+                  <td>{{$gallery->category->name}}</td>
                   <td>
                     <div class="pr-1 mb-3 mb-xl-0">
-                      <button type="button" class="btn btn-danger btn-icon mr-2 delete" data-id="" data-placement="top" data-toggle="tooltip" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                        <form method="POST" action="{{route('galleries.destroy',[$gallery->id])}}">
+                            @csrf
+                            @method('DELETE')
+                      <button type="submit" class="btn btn-danger btn-icon mr-2"><i class="fas fa-trash-alt"></i></button>
+                        </form>
                     </div>
                     <div class="pr-1 mb-3 mb-xl-0">
-                      <a type="button" href="" class="btn btn-warning  btn-icon mr-2" data-placement="top" data-toggle="tooltip" title="Edit"><i class="fas fa-user-edit"></i></a>
+                      <a type="button" href="{{route('galleries.edit',[$gallery->id])}}" class="btn btn-warning  btn-icon mr-2" data-placement="top" data-toggle="tooltip" title="Edit"><i class="fas fa-user-edit"></i></a>
                     </div>
                   </td>
                 </tr>
+                @endforeach
               </tbody>
             </table>
           </div>

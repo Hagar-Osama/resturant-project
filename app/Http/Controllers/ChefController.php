@@ -102,7 +102,7 @@ class ChefController extends Controller
      */
     public function update(Request $request, $chefId)
     {
-         if($row = $this->getChefById($chefId)) {
+         if($chef = $this->getChefById($chefId)) {
             $request->validate([
                 'name'=>'required|string|min:5|max:100',
                 'description'=>'required|string|min:5|max:255'
@@ -115,14 +115,12 @@ class ChefController extends Controller
                 ]);
                 $image = $request->file('image');
                 $image_name = rand() . '.' . $image->getClientOriginalExtension();
-                $this->uploadfile($image, 'chefs', $image_name);
+                $oldImagePath = 'images/chefs'. $chef->image;
+                $this->uploadfile($image, 'chefs', $image_name, $oldImagePath);
                 $data['image'] = $image_name;
-                if($row->image) {
-                    unlink('images/chefs/'.$row->image);
-                }
             }
         }
-         $row->update($data);
+         $chef->update($data);
          return redirect()->route('chefs.index')->with('success', 'Chef Has Been Updated Successfully');
 
     }

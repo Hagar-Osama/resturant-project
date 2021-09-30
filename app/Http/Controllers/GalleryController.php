@@ -2,11 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\galleryFileTrait;
+use App\Http\Traits\galleryTrait;
+use App\Models\Category;
 use App\Models\Gallery;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
+    use galleryTrait;
+    use galleryFileTrait;
+    private $gallModel;
+    private $categoryModel;
+    public function __construct(Gallery $gallery, Category $category)
+    {
+        $this->gallModel = $gallery;
+        $this->categoryModel = $category;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +27,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        $galleries = Gallery::get();
+        $galleries = $this->gallModel::get();
         return view('admin.galleries.index', compact('galleries'));
     }
 
@@ -25,7 +38,8 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        return view('admin.galleries.create');
+        $categories = $this->categoryModel::get();
+        return view('admin.galleries.create', compact('categories'));
     }
 
     /**
@@ -47,15 +61,16 @@ class GalleryController extends Controller
             ]);
             $image = $request->file('image');
             $image_name = rand(). '.' .$image->getClientOriginalExtension();
-            $image->move('images/galleries', $image_name);
-            Gallery::create([
+            $this->uploadFile($image, 'galleries', $image_name);
+            // $image->move('images/galleries', $image_name);
+            $this->gallModel::create([
                 'name'=>$request->name,
                 'category_id'=>$request->category_id,
                 'image'=>$image_name
             ]);
 
         }
-        return redirect()->route('admin.galleries.index')->with('success', 'Gallery Has Been Added Successfully');
+        return redirect()->route('galleries.index')->with('success', 'Gallery Has Been Added Successfully');
 
     }
 
@@ -67,7 +82,7 @@ class GalleryController extends Controller
      */
     public function show($id)
     {
-        $gallery = Gallery::findorfail($id);
+        $gallery = $this->getGallById($id);
         return view('admin.galleries.show', compact('gallery'));
     }
 
@@ -79,8 +94,9 @@ class GalleryController extends Controller
      */
     public function edit($id)
     {
-        $gallery = Gallery::find($id);
-        return view('admin.galleries.edit', compact('gallery'));
+        $gallery = $this->getGallById($id);
+        $categories = $this->categoryModel::get();
+        return view('admin.galleries.edit', compact('gallery', 'categories'));
     }
 
     /**
@@ -92,7 +108,7 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if ($gallery = Gallery::find($id)) {
+        if ($gallery = $this->getGallById($id)) {
             $request->validate([
                 'name'=>'required|string|min:5|max:100',
                 'category_id' =>'required'
@@ -106,20 +122,14 @@ class GalleryController extends Controller
                 ]);
                 $image = $request->file('image');
                 $image_name = rand(). '.' .$image->getClientOriginalExtension();
-                $image->move('images/galleries', $image_name);
-                Gallery::create([
-                    'name'=>$request->name,
-                    'category_id'=>$request->category_id,
-                    'image'=>$image_name
-                ]);
+                $oldImagePath = 'images/galleries'.$gallery->image;
+                $this->uploadFile($image,'galleries',$image_name, $oldImagePath);
+                // $image->move('images/galleries', $image_name);
                 $data['image'] = $image_name;
-                if($gallery->image) {
-                    unlink('images/galleries/'.$image_name);
-                }
             }
         }
         $gallery->update($data);
-        return redirect()->route('admin.galleries.index')->with('success', 'Gallery Has Been Updated Successfully');
+        return redirect()->route('galleries.index')->with('success', 'Gallery Has Been Updated Successfully');
 
     }
 
@@ -131,12 +141,12 @@ class GalleryController extends Controller
      */
     public function destroy($id)
     {
-        if ($gallery = Gallery::find($id)) {
+        if ($gallery = $this->getGallById($id)) {
+            $gallery->delete();
             if ($gallery->image) {
                 unlink('images/galleries/'.$gallery->image);
             }
-            $gallery->delete();
-            return redirect()->route('admin.galleries.index')->with('success', 'Gallery Has Been Deleted Successfully');
+            return redirect()->route('galleries.index')->with('success', 'Gallery Has Been Deleted Successfully');
         }
         return abort('404');
     }

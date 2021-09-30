@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\aboutTrait;
+use App\Http\Traits\aboutFileTrait;
 use App\Models\About;
 use Illuminate\Http\Request;
 
 class AboutController extends Controller
 {
+    use aboutTrait;
+    use aboutFileTrait;
+    private $aboutModel;
+    public function __construct(About $about)
+    {
+        $this->aboutModel = $about;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,8 +23,8 @@ class AboutController extends Controller
      */
     public function index()
     {
-        $about = About::get();
-        return view('admin.about-us.index', compact('about'));
+        $about = $this->aboutModel::get();
+        return view('admin.about.index', compact('about'));
     }
 
     /**
@@ -25,7 +34,7 @@ class AboutController extends Controller
      */
     public function create()
     {
-        return view('admin.about-us.create');
+        return view('admin.about.create');
     }
 
     /**
@@ -46,13 +55,13 @@ class AboutController extends Controller
             ]);
             $image = $request->file('image');
             $image_name = rand() . '.' . $image->getClientOriginalExtension();
-            $image->move('images/about_us', $image_name);
-            About::create([
+            $this->uploadFile($image, 'about',$image_name);
+            $this->aboutModel::create([
                 'body' => $request->body,
                 'image' => $image_name
             ]);
         }
-        return redirect()->route('admin.about-us.index')->with('success', 'About Us Has Been Added Successfully');
+        return redirect()->route('about.index')->with('success', 'About Us Has Been Added Successfully');
     }
 
     /**
@@ -63,8 +72,8 @@ class AboutController extends Controller
      */
     public function show($id)
     {
-        $about_u = About::findorfail($id);
-        return view('admin.about-us.show', compact('about_u'));
+        $about_u = $this->getAboutById($id);
+        return view('admin.about.show', compact('about_u'));
     }
 
     /**
@@ -75,8 +84,8 @@ class AboutController extends Controller
      */
     public function edit($id)
     {
-        $about_u = About::find($id);
-        return view('admin.about-us.edit', compact('about_u'));
+        $about_u = $this->getAboutById($id);
+        return view('admin.about.edit', compact('about_u'));
     }
 
     /**
@@ -100,15 +109,16 @@ class AboutController extends Controller
                 ]);
                 $image = $request->file('image');
                 $image_name = rand() . '.' . $image->getClientOriginalExtension();
-                $image->move('images/about_us', $image_name);
+                $oldImagePath = 'images/about'.$about->image;
+                $this->uploadFile($image, 'about',$image_name, $oldImagePath);
                 $data['image'] = $image_name;
-                if($about->image) {
-                    unlink('images/about_us/'.$about->image);
-                }
+
             }
+            $about->update($data);
+            return redirect()->route('about.index')->with('success', 'About Us Has Been Updated Successfully');
         }
-        $about->update($data);
-        return redirect()->route('admin.about-us.index')->with('success', 'About Us Has Been Updated Successfully');
+        return abort('404');
+
     }
 
     /**
@@ -119,13 +129,13 @@ class AboutController extends Controller
      */
     public function destroy($id)
     {
-        if ($about = About::find($id)) {
+        if ($about = $this->getAboutById($id)) {
             if ($about->image) {
 
-                unlink('images/about_us/'.$about->image);
+                unlink('images/about/'.$about->image);
             }
             $about->delete();
-            return redirect()->route('admin.about-us.index')->with('success', 'About Us Has Been Deleted Successfully');
+            return redirect()->route('about.index')->with('success', 'About Us Has Been Deleted Successfully');
         }
         return abort('404');
     }

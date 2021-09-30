@@ -46,7 +46,6 @@ class InfoController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
         $request->validate([
             'key'=>'required',
             'value'=> 'required|min:10|max:255'
@@ -99,6 +98,7 @@ class InfoController extends Controller
             return redirect()->route('information.index')->with('success', 'Information Has Been Updated Successfully');
 
         }
+        return abort('404');
     }
 
     /**

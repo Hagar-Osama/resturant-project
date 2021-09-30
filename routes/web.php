@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChefController;
 use App\Http\Controllers\ContactController;
@@ -30,15 +32,20 @@ Route::get('/showchefs',[HomeController::class, 'showchefs'])->name('chefs_page'
 Route::get('contact_us',[HomeController::class, 'contact_us'])->name('contact_us');
 
 
+    Route::get('/admin',[AdminController::class, 'index'])->name('admin.index');
 
-Route::get('admin/index', function () {
-    return view('admin/index');
-})->name('admin.index');
+    Route::resource('contacts', ContactController::class);
+    Route::resource('about', AboutController::class);
+    Route::resource('chefs', ChefController::class);
+    Route::resource('information', InfoController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('menus', MenuController::class);
+    Route::resource('galleries', GalleryController::class);
 
-Route::resource('contacts', ContactController::class);
-Route::resource('about-us', AboutController::class);
-Route::resource('chefs', ChefController::class);
-Route::resource('information', InfoController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('menus', MenuController::class);
-Route::resource('galleries', GalleryController::class);
+
+
+
+Route::get('/admin/login',[AuthController::class, 'loginPage'])->name('admin.loginpage');
+Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login');
+
+Route::post('/admin/logout',[AuthController::class, 'logout'])->name('admin.logout');

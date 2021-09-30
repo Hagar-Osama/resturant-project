@@ -2,14 +2,10 @@
 @section('css')
 <!-- Internal Select2 css -->
 <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-<!-- Internal Fileupload css -->
-<link href="{{URL::asset('assets/plugins/fileuploads/css/fileupload.css')}}" rel="stylesheet" type="text/css" />
 <!-- Internal Fancy uploader css -->
 <link href="{{URL::asset('assets/plugins/fancyuploder/fancy_fileupload.css')}}" rel="stylesheet" />
 <!-- Internal Sumoselect css -->
 <link rel="stylesheet" href="{{URL::asset('assets/plugins/sumoselect/sumoselect.css')}}">
-<!-- Internal  TelephoneInput css -->
-<link rel="stylesheet" href="{{URL::asset('assets/plugins/telephoneinput/telephoneinput.css')}}">
 <style>
 
 </style>
@@ -19,7 +15,7 @@
 <div class="breadcrumb-header justify-content-between">
     <div class="my-auto">
         <div class="d-flex">
-            <h4 class="content-title mb-0 my-auto">Chefs</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Edit / {{$chef->name}}</span>
+            <h4 class="content-title mb-0 my-auto">About US</h4><span class="text-muted mt-1 tx-13 ml-2 mb-0">/ Edit /</span>
         </div>
     </div>
 </div>
@@ -31,38 +27,29 @@
     <div class="col-lg-12 col-md-12">
         <div class="card">
             <div class="card-body">
-                @include('partials._session')
-                <form method="post" action="{{route('chefs.update', [$chef->id])}}" enctype="multipart/form-data" data-parsley-validate="">
+                <form method="POST" action="{{route('about.update', [$about_u->id])}}"  enctype="multipart/form-data" data-parsley-validate="">
                     @csrf
                     @method('PUT')
-                    <input type="hidden" name="chefId" value="{{$chef->id}}">
                     <div class="row row-xs">
                         <div class="col-md-12 mg-t-10">
                             <div class="form-group">
-                                <label class="form-label">name: <span class="tx-danger">*</span></label>
-                                <input class="form-control" name="name" value="{{$chef->name}}" required type="text">
-                            </div><!-- main-form-group -->
-                        </div>
-
-                        @error('name')
-                        <span class="invalid-feedback text-danger" role="alert">
-                            <p>{{ $message }}</p>
-                        </span>
-                        @enderror
-                        <div class="col-md-12 mg-t-10">
-                            <div class="form-group">
-                                <label class="form-label">Description: <span class="tx-danger">*</span></label>
-                                <textarea class="form-control" required name="description" rows="5">{{$chef->description}}</textarea>
+                                <label class="form-label">Body <span class="tx-danger">*</span></label>
+                                <textarea class="form-control" placeholder="Enter body" required name="body" rows="5">{{$about_u->body}}</textarea>
                             </div>
                         </div>
-                        @error('description')
+                        @error('body')
                         <span class="invalid-feedback text-danger" role="alert">
                             <p>{{ $message }}</p>
                         </span>
                         @enderror
+                        @if(! empty($about->image))
                         <div class="col-sm-12 col-md-4 mg-t-20">
-                            <label class="form-label">Image: <span style="font-size: 12px;">(Must be a file of dimension: 280*420)</span></label>
-                            <input type="file" class="dropify" data-default-file="{{ URL::asset('images/chefs/' . $chef->image) }}" name="image" data-width="280" data-height="420" />
+                            <img src="{{asset('images/about').'/'.$about->image}}" data-width="280" data-height="420">
+                        </div>
+                        @endif
+                        <div class="col-sm-12 col-md-4 mg-t-20">
+                            <label class="form-label">Image <span class="tx-danger">*</span></label>
+                            <input type="file" class="dropify" name="image"  data-default-file="{{ URL::asset('images/about/' . $about_u->image) }}" required data-width="280" data-height="420" />
                         </div>
                         @error('image')
                         <span class="invalid-feedback text-danger" role="alert">
@@ -107,7 +94,4 @@
 <script src="{{URL::asset('assets/js/select2.js')}}"></script>
 <!--Internal Sumoselect js-->
 <script src="{{URL::asset('assets/plugins/sumoselect/jquery.sumoselect.js')}}"></script>
-<!-- Internal TelephoneInput js-->
-<script src="{{URL::asset('assets/plugins/telephoneinput/telephoneinput.js')}}"></script>
-<script src="{{URL::asset('assets/plugins/telephoneinput/inttelephoneinput.js')}}"></script>
 @endsection

@@ -7,4 +7,10 @@ trait menuTrait {
     {
         return $this->menuModel::find($menuId);
     }
+
+    private function getMenus()
+    {
+        return $this->menuModel::get();
+    }
+
 }
