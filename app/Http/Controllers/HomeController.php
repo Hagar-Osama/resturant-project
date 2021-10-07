@@ -43,8 +43,9 @@ class HomeController extends Controller
         $menus = $this->getMenus();
         $galleries = $this->getGalleries();
         $about = $this->getAbout();
+
         return view('welcome', compact('categories', 'information', 'chefs','menus','galleries', 'about'));
-                        
+
 
 
 

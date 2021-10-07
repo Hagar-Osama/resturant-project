@@ -40,7 +40,6 @@
                                 <option value="Address">Address</option>
                                 <option value="Phone">Phone</option>
                                 <option value="Email">Email</option>
-                                <option value="Contact Info">Contact Info</option>
                                 <option value="Opening Hours">Opening Hours</option>
                             </select>
                             <div id="slErrorContainer"></div>

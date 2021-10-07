@@ -8,6 +8,6 @@ trait InfoTrait {
     }
     private function getInfo()
     {
-        return $this->infoModel::get();
+        return $this->infoModel::get()->groupBy('key');
     }
 }

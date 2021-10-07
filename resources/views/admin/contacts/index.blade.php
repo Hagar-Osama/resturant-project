@@ -44,10 +44,11 @@
               </tr>
               </thead>
               <tbody>
+                  @foreach($contacts as $contact)
               <tr>
-                <td>Mostafa</td>
-                <td>mostafa@gmail.com</td>
-                <td>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum, quod libero. Itaque fugit labore laudantium, saepe dolorum quam vitae voluptatem dolorem corrupti ad iure in recusandae fugiat aliquid autem magnam.</td>
+                <td>{{$contact->name}}</td>
+                <td>{{$contact->email}}</td>
+                <td>{{$contact->message}}</td>
                 <!-- <td>
                   <div class="d-flex my-xl-auto right-content">
                     <div class="pr-1 mb-3 mb-xl-0">
@@ -62,6 +63,7 @@
                   </div>
                 </td> -->
               </tr>
+              @endforeach
               </tbody>
             </table>
           </div>

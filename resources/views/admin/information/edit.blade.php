@@ -39,7 +39,6 @@
                                 <option value="Address" @if($info->key == 'Address') selected @else "" @endif>Address</option>
                                 <option value="Phone" @if($info->key == 'Phone') selected @else "" @endif>Phone</option>
                                 <option value="Email" @if($info->key == 'Email') selected @else "" @endif>Email</option>
-                                <option value="Contact Info" @if($info->key == 'Contact Info') selected @else "" @endif>Contact Info</option>
                                 <option value="Opening Hours" @if($info->key == 'Opening Hours') selected @else "" @endif>Opening Hours</option>
                             </select>
                             <div id="slErrorContainer"></div>
